@@ -150,6 +150,46 @@ func (sl *SkipList) Search(number int) *Node {
 	return nil
 }
 
+func (sl *SkipList) Delete(number int) {
+	update := make([]*Node, sl.currentLevel)
+	current := sl.head
+
+	deletionMaxLevel := -1
+
+	// Step 3: Search for insertion points from top to bottom
+	for i := sl.currentLevel - 1; i >= 0; i-- {
+		// Move forward while next node exists and its value < insert value
+		for current.next[i] != nil && current.next[i].value < number {
+			current = current.next[i]
+		}
+
+		if deletionMaxLevel == -1 && current.next[i] != nil && current.next[i].value == number {
+			deletionMaxLevel = i
+		}
+
+		update[i] = current
+	}
+
+	if deletionMaxLevel == -1 {
+		fmt.Println("Number doesn't exist: ", number)
+		return
+	}
+
+	for i := deletionMaxLevel; i >= 0; i-- {
+		temp := update[i].next[i]
+		if temp != nil {
+			update[i].next[i] = temp.next[i]
+		}
+	}
+
+	// Decrement the current level if the tops levels are empty
+	for sl.currentLevel > 1 && sl.head.next[sl.currentLevel-1] == nil {
+		sl.currentLevel--
+	}
+
+	fmt.Println("Deleted number: ", number)
+}
+
 // Display prints the skip list structure (for debugging)
 func (sl *SkipList) Display() {
 	fmt.Println("\n=== Skip List Structure ===")

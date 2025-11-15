@@ -38,4 +38,7 @@ func main() {
 	skiplist.Search(30)
 	skiplist.Search(17)
 	skiplist.Search(24)
+
+	skiplist.Delete(10)
+	skiplist.Display()
 }
